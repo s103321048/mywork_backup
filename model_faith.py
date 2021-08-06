@@ -25,8 +25,8 @@ warnings.filterwarnings("ignore")
 benepar.download('benepar_en2')
 nltk.download('stopwords')
 
-class FEQA(object):
-    def __init__(self, device='cpu', qa_model_name = "deepset/minilm-uncased-squad2", qg_model_dir='../feqa/bart_qg/checkpoints/'):
+class FEQA(object): # qa_model source: https://huggingface.co/deepset/minilm-uncased-squad2
+    def __init__(self, device='cpu', qa_model_name = "deepset/minilm-uncased-squad2", qg_model_dir='models/bart_qg/checkpoints/'):
         
         self.qg_model = BARTModel.from_pretrained(
             qg_model_dir,
