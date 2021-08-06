@@ -1,0 +1,14 @@
+transformers==3.1.0
+#sklearn==0.22.1
+scikit-learn==0.22.1
+nltk==3.5
+torch==1.7.0
+benepar==0.1.2
+tensorflow==1.15.0
+fairseq==0.10.2
+Cython==0.29.23
+spacy==3.0.6
+h5py
+tqdm
+networkx
+matplotlib
