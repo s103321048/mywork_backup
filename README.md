@@ -31,6 +31,21 @@ Once all the pretraining models and data are ready, train a Summarizer can be do
 python3 train_summarizer.py --dataset_file {path/to/test_dataset.db} --root_folder {path/to/mywork_backup} --experiment {experiment_name}
 ```
 
+## Generate Summary
+```
+from model_generator import GeneTransformer
+
+generator = GeneTransformer(device="cuda") # Initialize the generator
+generator.reload("/path/to/summarizer.bin")
+document = "This is a long document I want to summarize"
+
+# Have to put in list because the decode function is meant to be used in batches for efficiency.
+# You can use a beam size or not (beam_size), and you can use sampling or not (sample), without sampling it does argmax/top_k
+
+summary = generator.decode([document], max_output_length=61, beam_size=1, return_scores=False, sample=False)
+print(summary)
+```
+
 ## Scorer Models (Optional)
 The Factual Consistency, Coverage, Fluency models and Brecity can be used separatelt for analysis, evaluation, etc. They are respectively in `model_faith.py`, `model_coverage.py`, `model_generator.py`, `model_guardrails.py`, each model is implemented as a class with a `score(document, summary)` function. 
 
