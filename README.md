@@ -1,9 +1,12 @@
 # Boosting Factual Consistency and High Coverage in Unsupervised Abstractive Summarization
 
 ## Dependencies
----
 - Python 3.6+
+- (Optional) Highly recommand to creat a virtual environment to run the following code:
+    1. `python3 -m venv {path/venv_name}`
+    2. `source {path/venv_name}/bin/activate`
 - Install all Python packages: `pip install -r requirements.txt`
+- Install spacy english: `python -m spacy download en_core_web_sm`
 
 Leverage with the pre-trained models from [Summary Loop](https://github.com/CannyLab/summary_loop/releases/tag/v0.1), download the following files and place them under _models_ directory. Here are the models needed to run the `train_summarizer.py`:
 - `bert_coverage.bin`: A bert-base-uncased finetuned model on the task of Coverage for the news domain,
@@ -14,8 +17,11 @@ Also leverage with the qg_model from [FEQA](https://github.com/esdurmus/feqa) an
 - Download [checkpoints](https://drive.google.com/drive/folders/1GrnfJxaK35O2IEevv4VbiwYSwxBQVI2X) folder and place it under _bart_qg_ directory.
 - No need to install qa_model, it will be automaticly download.
 
+You can try running the following two instruction to see if all component are correct.
+- `python3 model_faith.py`
+- `python3 model_coverage.py`
+
 ## Data Prepare
----
 Follow the instructions [here](https://github.com/JafferWilson/Process-Data-of-CNN-DailyMail) to download CNNDM dataset under _data_ directory. Recommand follow Option1. (See discussion [here](https://github.com/abisee/cnn-dailymail/issues/9) about why we do not provide it ourselves). And see to [create a dataset](https://github.com/CannyLab/summary_loop/blob/master/Dataset%20SQLite3%20Example.ipynb) that will be capable with Summary Loop training script. 
 1. `cd data`
 2. `git clone https://github.com/abisee/cnn-dailymail.git`
@@ -42,7 +48,7 @@ document = "This is a long document I want to summarize"
 # Have to put in list because the decode function is meant to be used in batches for efficiency.
 # You can use a beam size or not (beam_size), and you can use sampling or not (sample), without sampling it does argmax/top_k
 
-summary = generator.decode([document], max_output_length=61, beam_size=1, return_scores=False, sample=False)
+summary = generator.decode([document], max_output_length=25, beam_size=1, return_scores=False, sample=False)
 print(summary)
 ```
 

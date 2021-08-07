@@ -10,11 +10,11 @@ def pad(data, padval=0):
 class GeneTransformer:
     def __init__(self, max_output_length=25, max_input_length=300, device='cpu', tokenizer_type='gpt2', bpe_model="", starter_model=None):
         if tokenizer_type == "gpt2":
-            self.tokenizer = utils_tokenizer.GPT2Tokenizer()
+            self.tokenizer = utils.utils_tokenizer.GPT2Tokenizer()
             config = GPT2Config.from_pretrained("gpt2")
 
         elif tokenizer_type == "bpecap":
-            self.tokenizer = utils_tokenizer.BPETokenizer(bpe_model)
+            self.tokenizer = utils.utils_tokenizer.BPETokenizer(bpe_model)
             config = GPT2Config.from_dict({"finetuning_task": None, "initializer_range": 0.02,
                             "layer_norm_epsilon": 1e-05, "n_ctx": 1024, "n_embd": 768, "n_head": 12, "n_layer": 12, "n_positions": 1024, "num_labels": 1,
                             "resid_pdrop": 0.1, "use_bfloat16": False, "vocab_size": self.tokenizer.vocab_size})

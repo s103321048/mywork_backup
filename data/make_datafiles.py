@@ -20,13 +20,13 @@ dm_double_close_quote = '\u201d'
 END_TOKENS = ['.', '!', '?', '...', "'", "`", '"',
               dm_single_close_quote, dm_double_close_quote, ")"]
 
-all_train_urls = "url_lists/all_train.txt"
-all_val_urls = "url_lists/all_val.txt"
-all_test_urls = "url_lists/all_test.txt"
+all_train_urls = "cnn-dailymail/url_lists/all_train.txt"
+all_val_urls = "cnn-dailymail/url_lists/all_val.txt"
+all_test_urls = "cnn-dailymail/url_lists/all_test.txt"
 
 cnn_tokenized_stories_dir = "cnn_stories_tokenized"
 dm_tokenized_stories_dir = "dm_stories_tokenized"
-finished_files_dir = "finished_files"
+# finished_files_dir = "finished_files"
 
 # These are the number of .story files we expect there to be in cnn_stories_dir
 # and dm_stories_dir
@@ -223,8 +223,8 @@ def insert_to_db(url_file, out_file, makevocab=False):
     # write vocab to file
     if makevocab:
         print("Writing vocab file...")
-        with open(os.path.join(finished_files_dir, "vocab_cnt.pkl"),
-                  'wb') as vocab_file:
+        #with open(os.path.join(finished_files_dir, "vocab_cnt.pkl"),
+        with open("vocab_cnt.pkl",'wb') as vocab_file:
             pkl.dump(vocab_counter, vocab_file)
         print("Finished writing vocab file")
 

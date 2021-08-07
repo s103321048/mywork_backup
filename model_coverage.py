@@ -8,7 +8,7 @@ from sklearn.feature_extraction import DictVectorizer
 from sklearn.pipeline import Pipeline
 from collections import Counter
 import joblib
-from utils.util_tdw import mydep_dict
+from utils.utils_tdw import mydep_dict
 
 class KeywordExtractor():
     def __init__(self, n_kws=15):
@@ -72,8 +72,6 @@ class KeywordExtractor():
         kws_is = set(self.tokenizer.encode(kws)[1:-1]) # remove begin_tok, end_tok
         kws_texts = [self.tokenizer.ids_to_tokens[kwi] for kwi in kws_is]
         outputs = (kws_is, kws_texts)
-
-
         return outputs
 
 class KeywordCoverage():
@@ -94,6 +92,10 @@ class KeywordCoverage():
         if model_file is not None:
             print("Model:", "[{}]".format(model_file.split('/')[-1]), "is loaded.")
             self.reload_model(model_file)
+
+    def print_keyword(self, content):
+        kws_texts = self.kw_ex.extract_keywords(content)[1]
+        print(kws_texts)
 
     def mask_text(self, text_tokenized, content):
         kws_is, kws_texts = self.kw_ex.extract_keywords(content)
@@ -183,13 +185,9 @@ if __name__ == "__main__":
 
     # contents = ["Rowan Williams and Simon Russell Beale: Shakespeare - Spiritual, Secular or Both? [17] Was Shakespeare a secret Catholic in an age of recusansy laws? Or a steadfast Anglican? And what cryptic clues do his plays provide? The Archbishop of Canterbury examines the Bard's relationship with religion. Oxfam Stage, PS5 Gareth Malone: Music for the People [18] Having made choral music cool with kids - sort of - as the beaming maestro in BAFTA-winning BBC series The Choir, Malone now directs his seemingly limitless enthusiasm to the broader classical genre. 5.15pm Ofxam Stage, PS5 Sir Colin Humphreys: Cambridge Series 1: The Mystery of The Last Supper [21] The distinguished physicist turned biblical historian explains the primary revelation of his latest book: that the Last Supper took place on Holy Wednesday, not Maundy Thursday. All down to calendaring, apparently. 5.15pm Llwyfan Cymru - Wales Stage, PS5 Rachel Campbell-Johnston: Mysterious Wisdom [22] From fertile Kent gardens to the pastoral elegance of the Campania countryside, Samuel Palmer was a master of lanscape painting. Rachel Campbell-Johnston discusses her new book on the lynchpin of British Romanticism. 6.30pm Elmley Foundation Theatre, PS5 Anthony Sattin: Lifting the Veil [27] While the UK population's mini-break plans to Egypt may be shelved for the forseeale future, this hasn't dettered Anthony Sattin's infatuation. He traces two centuries of kindred spirits drawn to the beguiling mores of the Land of the Pharoahs. 7.45pm Llwyfan Cymru - Wales Stage, PS5 Simon Mitton - Cambridge Series 3: From Alexandria to Cambridge [29] The secrets of life, the universe and everything have been written in the stars since time began. Astrophysicist and academic Simon Mitton believes they are now more readily available - in books. Here he explores five key works, from Copernicus to Newton. 9.30pm Oxfam Stage, PS8 Jason Byrne: Cirque du Byrne"]
     contents = ["To the chagrin of New York antiques dealers, lawmakers in Albany have voted to outlaw the sale of virtually all items containing more than small amounts of elephant ivory, mammoth ivory or rhinoceros horn. The legislation, which is backed by Gov. Andrew M. Cuomo, will essentially eliminate New York's central role in a well-established, nationwide trade with an estimated annual value of $500 million. Lawmakers say the prohibitions are needed to curtail the slaughter of endangered African elephants and rhinos, which they say is fueled by a global black market in poached ivory, some of which has turned up in New York. The illegal ivory trade has no place in New York State, and we will not stand for individuals who violate the law by supporting it,\" Mr. Cuomo said in a statement on Tuesday, during the debate on the bill. The bill was approved by the Assembly on Thursday, 97 to 2, and passed the Senate, 43 to 17, on Friday morning. Mr. Cuomo is expected to sign it within a week. Assemblyman Robert K. Sweeney, Democrat of Lindenhurst, a sponsor, said that the law \"recognizes the significant impact our state can have on clamping down on illegal ivory sales\" and that it would help rescue elephants from \"ruthless poaching operations run by terrorists and organized crime.\" Dealers and collectors who trade in ivory antiques owned long before the era of mass poaching say the restrictions, which are stiffer than similar federal rules announced in May, will hurt legitimate sellers but do little to protect endangered animals. The real threat to elephants and rhinos, they say, comes from the enormous illicit market in tusks and horns based in China and other Asian nations. \"It is masterful self-deception to think the elephant can be saved by banning ivory in New"]
-    summaries = ["In New York selling ivory is illegal."]
+    summaries = ["In New York selling elephant ivory is illegal."]
 
-    # models_folder = "/home/phillab/models/"
-    # model_file = os.path.join(models_folder, "bert_coverage_cnndm_lr4e5_0.bin")
-    # model_file = os.path.join(models_folder, "bert_coverage_cnndm_bs64_0.bin")
-    # kw_cov = KeywordCoverage("cuda", model_file=model_file, keyword_model_file=os.path.join(models_folder, "keyword_extractor.joblib"))
-    kw_cov = KeywordCoverage("cuda") #, model_file=model_file, keyword_model_file=os.path.join(models_folder, "keyword_extractor.joblib"))
+    kw_cov = KeywordCoverage("cuda", n_kws=5) #, model_file=model_file, keyword_model_file=os.path.join(models_folder, "keyword_extractor.joblib"))
     bert_tokenizer = utils.utils_tokenizer.BERTCacheTokenizer()
 
     contents_tokenized = [bert_tokenizer.encode(body) for body in contents]
@@ -203,8 +201,8 @@ if __name__ == "__main__":
         print("---------  summary ----------")
         print(summaries[0])
         print("---------  keyword ----------")
-        print()
+        kw_cov.print_keyword(body)
         print("--- summary coverage score ---")
         print(score)
         print("-- empty doc coverage score --")
-        print(ns_score)
+        print(ns_score.item())

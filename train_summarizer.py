@@ -40,8 +40,7 @@ models_folder = args.root_folder + "models/"
 log_folder = args.root_folder + "logs/"
 
 # Select initial Summarizer
-#summarizer_model_start = os.path.join(models_folder, "origin_models/gpt2_copier23.bin")
-summarizer_model_start = os.path.join(models_folder, "gpt2_train_copy32_2.bin")
+summarizer_model_start = os.path.join(models_folder, "gpt2_copier23.bin")
 #summarizer_model_start = os.path.join(models_folder, "summarizer_cnntrain_with_gpt2_copy_L25.bin")
 #summarizer_model_start = os.path.join(models_folder, "origin_models/summary_loop_length24.bin")
 
@@ -144,7 +143,7 @@ def not_trigger_faith(log_obj, total_sampled_scores, start_training):
                  log_obj['coverage_score'] < 0.3
                 )
 
-# start_training = time.time()
+start_training = time.time()
 for epi in range(n_epochs):
     print("=================== EPOCH",epi, "===================")
     for ib, documents in enumerate(dataloader):
