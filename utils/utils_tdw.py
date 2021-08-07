@@ -293,13 +293,8 @@ def mydep_score(text_list, all_dep=False, keystr=False):
 def mydep_dict(text, all_dep=False, keystr=False):
     node_dict = mydep_node_dict(text, all_dep=all_dep)
     stopw = load_stop_words()
-
     keyword_dict = dict()
 
-    ##############################################
-    # this is cheating... but get a better score #
-    keystr = False 
-    ##############################################
     if keystr:
         for node in node_dict:
             if len(node.split(" ")) == 1:

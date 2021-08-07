@@ -1,7 +1,7 @@
 from transformers.modeling_gpt2 import GPT2LMHeadModel, GPT2Config
 
 import torch.utils.data.dataset
-import utils_tokenizer
+import utils.utils_tokenizer
 import torch, tqdm
 
 def pad(data, padval=0):

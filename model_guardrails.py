@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader, RandomSampler, TensorDataset
 from torch.nn.modules.loss import CrossEntropyLoss
 import torch, os, sys, nltk, tqdm, time, math
 from transformers.optimization import AdamW
-from utils_logplot import LogPlot
+from utils.utils_logplot import LogPlot
 from collections import Counter
 
 STOP_WORDS = set(["'", ".", "!", "?", ",", '"', '-', 'we', 'our', 'you', 'he', 'him', 'she', 'her', 'it', "it's", 'its', 'they', 'their', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'have', 'has', 'had', 'do', 'does', 'did', 'a', 'an', 'the', 'and', 'or', 'as', 'of', 'at', 'by', 'to', 'not', 'so', "'s", "in", "for", "with", "on"])

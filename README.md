@@ -5,7 +5,7 @@
 - Python 3.6+
 - Install all Python packages: `pip install -r requirements.txt`
 
-Leverage with the pre-trained models from [Summary Loop](https://github.com/CannyLab/summary_loop/releases/tag/v0.1), download the following files and place them under _models_ directory. Here are the models needed to run the `train_summary_loop.py`:
+Leverage with the pre-trained models from [Summary Loop](https://github.com/CannyLab/summary_loop/releases/tag/v0.1), download the following files and place them under _models_ directory. Here are the models needed to run the `train_summarizer.py`:
 - `bert_coverage.bin`: A bert-base-uncased finetuned model on the task of Coverage for the news domain,
 - `fluency_news_bs32.bin`: A GPT2 (base) model finetuned on a large corpus of news articles, used as the Fluency model,
 - `gpt2_copier23.bin`: A GPT2 (base) model that can be used as an initial point for the Summarizer model.
@@ -26,7 +26,10 @@ Follow the instructions [here](https://github.com/JafferWilson/Process-Data-of-C
 Otherwise, you can modify the scripts' data loading (`Dataloader`) and collate function (`collate_fn`) to bring in your own data.
 
 ## Training Procedure
-
+Once all the pretraining models and data are ready, train a Summarizer can be done using `train_summarizer.py`:
+```
+python3 train_summarizer.py --dataset_file {path/to/test_dataset.db} --root_folder {path/to/mywork_backup} --experiment {experiment_name}
+```
 
 ## Scorer Models (Optional)
 The Factual Consistency, Coverage, Fluency models and Brecity can be used separatelt for analysis, evaluation, etc. They are respectively in `model_faith.py`, `model_coverage.py`, `model_generator.py`, `model_guardrails.py`, each model is implemented as a class with a `score(document, summary)` function. 
