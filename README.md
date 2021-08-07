@@ -32,6 +32,7 @@ Otherwise, you can modify the scripts' data loading (`Dataloader`) and collate f
 The Factual Consistency, Coverage, Fluency models and Brecity can be used separatelt for analysis, evaluation, etc. They are respectively in `model_faith.py`, `model_coverage.py`, `model_generator.py`, `model_guardrails.py`, each model is implemented as a class with a `score(document, summary)` function. 
 
 - Build your own Summarizer & Fluency Scorer
+
     You can used `utils/train_generator.py` to build your own Summarizer & Fluency model. 
     ```
     python3 train_generator.py --dataset_file {path/to/test_dataset.db} --task {cgen/copy/lm} --max_output_length {23} --experiment {experiment_name}
@@ -40,6 +41,7 @@ The Factual Consistency, Coverage, Fluency models and Brecity can be used separa
     - `lm`: is used to create Fluency Scorer.
 
 - Build your own Coverage Scorer
+
     You can use `utils/pretrain_bert.py` to fine-tune BERT model to your target domain, in our example, news domain.
     ```
     python3 pretrain_bert.py --dataset_file {path/to/test_dataset.db}
