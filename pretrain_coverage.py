@@ -16,8 +16,8 @@ parser.add_argument("--n_kws", type=int, default=15, help="Top n words (tf-idf w
 parser.add_argument("--device", type=str, default="cuda", help="cuda or cpu")
 parser.add_argument('--fp16', action='store_true', help="Whether to use 16-bit (mixed) precision (through NVIDIA apex) instead of 32-bit")
 
-models_folder = "/home/ubuntu/models/"
-logs_folder =   "/home/ubuntu/logs/"
+models_folder = "/home/robin/TrySomethingNew/summary_loop_by_me/models/"
+logs_folder =   "/home/robin/TrySomethingNew/summary_loop_by_me/logs/"
 
 
 args = parser.parse_args()
@@ -34,7 +34,9 @@ def collate_func(documents):
 dataset = SQLDataset(args.dataset_file)
 dataloader = DataLoader(dataset=dataset, batch_size=args.train_batch_size, sampler=RandomSampler(dataset), drop_last=True, collate_fn=collate_func)
 
-kw_cov = KeywordCoverage(args.device, keyword_model_file=os.path.join(models_folder, "keyword_extractor.joblib"), n_kws=args.n_kws) # , model_file=os.path.join(models_folder, "news_bert_bs64.bin")
+# kw_cov = KeywordCoverage(args.device, keyword_model_file=os.path.join(models_folder, "keyword_extractor.joblib"), n_kws=args.n_kws) # , model_file=os.path.join(models_folder, "news_bert_bs64.bin")
+#kw_cov = KeywordCoverage(args.device, n_kws=args.n_kws) # , model_file=os.path.join(models_folder, "news_bert_bs64.bin")
+kw_cov = KeywordCoverage(args.device, n_kws=args.n_kws , model_file=os.path.join(models_folder, "news_bert_train.bin") )
 kw_cov.model.train()
 print("Loaded model")
 
