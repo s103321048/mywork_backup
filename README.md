@@ -16,11 +16,35 @@ Also leverage with the qg_model from [FEQA](https://github.com/esdurmus/feqa) an
 
 ## Data Prepare
 ---
-Follow the instructions [here](https://github.com/JafferWilson/Process-Data-of-CNN-DailyMail) to download CNNDM dataset under _data_ directory. Recommand follow Option1. (See discussion [here](https://github.com/abisee/cnn-dailymail/issues/9) about why we do not provide it ourselves). And see to [create a dataset](https://github.com/CannyLab/summary_loop/blob/master/Dataset%20SQLite3%20Example.ipynb) that will be capable with Summary Loop training script.
+Follow the instructions [here](https://github.com/JafferWilson/Process-Data-of-CNN-DailyMail) to download CNNDM dataset under _data_ directory. Recommand follow Option1. (See discussion [here](https://github.com/abisee/cnn-dailymail/issues/9) about why we do not provide it ourselves). And see to [create a dataset](https://github.com/CannyLab/summary_loop/blob/master/Dataset%20SQLite3%20Example.ipynb) that will be capable with Summary Loop training script. 
 1. `cd data`
 2. `git clone https://github.com/abisee/cnn-dailymail.git`
 3. download CNN_STORIES_TOKENIZED, DM_STORIES_TOKENIZED from [here](https://github.com/JafferWilson/Process-Data-of-CNN-DailyMail) and unzip it
 4. `python3 make_datafiles.py`
-5. `test_dataset.db` will be create 
+5. `test_dataset.db` will be create
+
+Otherwise, you can modify the scripts' data loading (`Dataloader`) and collate function (`collate_fn`) to bring in your own data.
 
 ## Training Procedure
+
+
+## Scorer Models (Optional)
+The Factual Consistency, Coverage, Fluency models and Brecity can be used separatelt for analysis, evaluation, etc. They are respectively in `model_faith.py`, `model_coverage.py`, `model_generator.py`, `model_guardrails.py`, each model is implemented as a class with a `score(document, summary)` function. 
+
+### Build your own Summarizer & Fluency Scorer
+You can used `utils/train_generator.py` to build your own Summarizer & Fluency model. 
+```
+python3 train_generator.py --dataset_file {path/to/test_dataset.db} --task {cgen/copy/lm} --max_output_length {23} --experiment {experiment_name}
+```
+- `cgen` and `copy` is used to create Summarizer.
+- `lm`: is used to create Fluency Scorer.
+
+### Build your own Coverage Scorer
+You can use `utils/pretrain_bert.py` to fine-tune BERT model to your target domain, in our example, news domain.
+```
+python3 pretrain_bert.py --gpu_nb 1 --dataset_file {path/to/test_dataset.db}
+```
+And used `utils/pretrain_coverage.py` to build Coverage Scorer.
+```
+python3 pretrain_coverage.py --dataset_file {path/to/test_dataset.db} --experiment {experiment_name}
+```
