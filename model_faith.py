@@ -327,7 +327,7 @@ if __name__ == "__main__":
                 first successful powered aeroplane."]
     summaries = [
                 "The world's oldest person died in 1898",
-                "The world's oldest person died after her 117th birthday"]
+                "The world's oldest person died after her 117th birthday in 1999"]
 
     ts = time.time()
     score, _= scorer.score(summaries, documents)
