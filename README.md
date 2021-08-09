@@ -1,13 +1,18 @@
 # Boosting Factual Consistency and High Coverage in Unsupervised Abstractive Summarization
 
 ## Dependencies
-- Python 3.6+
 - (Optional) Highly recommand to creat a virtual environment to run the following code:
     1. `python3 -m venv {path/venv_name}`
     2. `source {path/venv_name}/bin/activate`
-- Install all Python packages: `pip install -r requirements.txt`
-- Install spacy english: `python -m spacy download en_core_web_sm`
-
+    3. `python -m pip install --upgrade pip setuptools`
+- With Python 3.6+:
+    - Install all Python packages: `pip install -r requirements.txt`
+    - Install spacy english: `python -m spacy download en_core_web_sm`
+- Python 3.8+:
+    - Install all Python packages: `pip install -r requirements_python38.txt`
+    - Install spacy english: `python -m spacy download en_core_web_sm`
+    - `pip install torch==1.7.1+cu110 -f https://download.pytorch.org/whl/torch_stable.html` [(source)](https://github.com/pytorch/pytorch/issues/49161)
+    
 Leverage with the pre-trained models from [Summary Loop](https://github.com/CannyLab/summary_loop/releases/tag/v0.1), download the following files and place them under _models_ directory. Here are the models needed to run the `train_summarizer.py`:
 - `bert_coverage.bin`: A bert-base-uncased finetuned model on the task of Coverage for the news domain,
 - `fluency_news_bs32.bin`: A GPT2 (base) model finetuned on a large corpus of news articles, used as the Fluency model,
