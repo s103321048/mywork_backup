@@ -33,48 +33,6 @@ dm_tokenized_stories_dir = "dm_stories_tokenized"
 num_expected_cnn_stories = 92579
 num_expected_dm_stories = 219506
 
-
-# def tokenize_stories(stories_dir, tokenized_stories_dir):
-#     """Maps a whole directory of .story files to a tokenized version using
-#        Stanford CoreNLP Tokenizer
-#     """
-#     print("Preparing to tokenize {} to {}...".format(stories_dir,
-#                                                      tokenized_stories_dir))
-#     stories = os.listdir(stories_dir)
-#     # make IO list file
-#     print("Making list of files to tokenize...")
-#     with open("mapping.txt", "w") as f:
-#         for s in stories:
-#             f.write(
-#                 "{} \t {}\n".format(
-#                     os.path.join(stories_dir, s),
-#                     os.path.join(tokenized_stories_dir, s)
-#                 )
-#             )
-#     # command = ['java', 'edu.stanford.nlp.process.PTBTokenizer',
-#             #    '-ioFileList', '-preserveLines', 'mapping.txt']
-#     command = ['java', '-cp', '/home/robin/LisaWork/stanford-corenlp-4.1.0/stanford-corenlp-4.1.0.jar', 'edu.stanford.nlp.process.PTBTokenizer', '-ioFileList', '-preserveLines', 'mapping.txt']
-#     print("Tokenizing {} files in {} and saving in {}...".format(
-#         len(stories), stories_dir, tokenized_stories_dir))
-#     subprocess.call(command)
-#     print("Stanford CoreNLP Tokenizer has finished.")
-#     os.remove("mapping.txt")
-
-#     # Check that the tokenized stories directory contains the same number of
-#     # files as the original directory
-#     num_orig = len(os.listdir(stories_dir))
-#     num_tokenized = len(os.listdir(tokenized_stories_dir))
-#     if num_orig != num_tokenized:
-#         raise Exception(
-#             "The tokenized stories directory {} contains {} files, but it "
-#             "should contain the same number as {} (which has {} files). Was"
-#             " there an error during tokenization?".format(
-#                 tokenized_stories_dir, num_tokenized, stories_dir, num_orig)
-#         )
-#     print("Successfully finished tokenizing {} to {}.\n".format(
-#         stories_dir, tokenized_stories_dir))
-
-
 def read_story_file(text_file):
     with open(text_file, "r") as f:
         # sentences are separated by 2 newlines
@@ -228,6 +186,95 @@ def insert_to_db(url_file, out_file, makevocab=False):
             pkl.dump(vocab_counter, vocab_file)
         print("Finished writing vocab file")
 
+def save_as_pickle(url_file, out_file, makevocab=False):
+    """Reads the tokenized .story files corresponding to the urls listed in the
+       url_file and writes them to a out_file.
+    """
+    news_dict_list = []
+
+    print(out_file)
+    db_file = out_file
+    if os.path.isfile(db_file):
+        os.remove(db_file)
+
+    print("Making bin file for URLs listed in {}...".format(url_file))
+    url_list = [line.strip() for line in open(url_file)]
+    url_hashes = get_url_hashes(url_list)
+    story_fnames = [s+".story" for s in url_hashes]
+    num_stories = len(story_fnames)
+
+    if makevocab:
+        vocab_counter = collections.Counter()
+
+    ts = time.time()
+    for idx, s in enumerate(tqdm(story_fnames)):
+        if idx % 1000 == 0:
+            print("Writing story {} of {}; {:.2f} percent done. Time spent: {:.2f}".format(
+                idx, num_stories, float(idx)*100.0/float(num_stories), time.time() - ts ))
+
+        # Look in the tokenized story dirs to find the .story file
+        # corresponding to this url
+        if os.path.isfile(os.path.join(cnn_tokenized_stories_dir, s)):
+            story_file = os.path.join(cnn_tokenized_stories_dir, s)
+        elif os.path.isfile(os.path.join(dm_tokenized_stories_dir, s)):
+            story_file = os.path.join(dm_tokenized_stories_dir, s)
+        else:
+            print("Error: Couldn't find tokenized story file {} in either"
+                    " tokenized story directories {} and {}. Was there an"
+                    " error during tokenization?".format(
+                        s, cnn_tokenized_stories_dir,
+                        dm_tokenized_stories_dir))
+            # Check again if tokenized stories directories contain correct
+            # number of files
+            print("Checking that the tokenized stories directories {}"
+                    " and {} contain correct number of files...".format(
+                        cnn_tokenized_stories_dir, dm_tokenized_stories_dir))
+            check_num_stories(cnn_tokenized_stories_dir,
+                                num_expected_cnn_stories)
+            check_num_stories(dm_tokenized_stories_dir,
+                                num_expected_dm_stories)
+            raise Exception(
+                "Tokenized stories directories {} and {}"
+                " contain correct number of files but story"
+                " file {} found in neither.".format(
+                    cnn_tokenized_stories_dir,
+                    dm_tokenized_stories_dir, s)
+            )
+
+        # Get the strings to write to .bin file
+        article_sents, abstract_sents = get_art_abs(story_file)
+
+        # Write to .db file
+        body = " ".join( article_sents )
+        title = " . ".join( abstract_sents )
+
+        news_dict = dict()
+        news_dict["content"] = body
+        news_dict["summary"] = title
+        news_dict_list.append(news_dict)
+
+        # Write the vocab to file, if applicable
+        if makevocab:
+            art_tokens = ' '.join(article_sents).split()
+            abs_tokens = ' '.join(abstract_sents).split()
+            tokens = art_tokens + abs_tokens
+            tokens = [t.strip() for t in tokens] # strip
+            tokens = [t for t in tokens if t != ""] # remove empty
+            vocab_counter.update(tokens)
+
+    print("Finished writing file {}\n".format(out_file))
+    with open(out_file, "wb") as f:
+        pickle.dump(news_dict_list, f)
+
+    # write vocab to file
+    if makevocab:
+        print("Writing vocab file...")
+        with open(os.path.join(finished_files_dir, "vocab_cnt.pkl"),
+                  'wb') as vocab_file:
+            pickle.dump(vocab_counter, vocab_file)
+
+        print("Finished writing vocab file")
+
 
 def check_num_stories(stories_dir, num_expected):
     num_stories = len(os.listdir(stories_dir))
@@ -238,35 +285,12 @@ def check_num_stories(stories_dir, num_expected):
                 stories_dir, num_stories, num_expected)
         )
 
-
 if __name__ == '__main__':
-    # if len(sys.argv) != 3:
-    #     print("USAGE: python make_datafiles.py"
-    #           " <cnn_stories_dir> <dailymail_stories_dir>")
-    #     sys.exit()
-    # cnn_stories_dir = sys.argv[1]
-    # dm_stories_dir = sys.argv[2]
+    save_as_pickle(all_test_urls, "test_dataset.pkl")
+    insert_to_db(  all_test_urls, "test_dataset.db")
 
-    # # Check the stories directories contain the correct number of .story files
-    # check_num_stories(cnn_stories_dir, num_expected_cnn_stories)
-    # check_num_stories(dm_stories_dir, num_expected_dm_stories)
+    # save_as_pickle(all_val_urls, "val_dataset.pkl")
+    # insert_to_db(  all_val_urls, "val_dataset.db")
 
-    # # Create some new directories
-    # if not os.path.exists(cnn_tokenized_stories_dir):
-    #     os.makedirs(cnn_tokenized_stories_dir)
-    # if not os.path.exists(dm_tokenized_stories_dir):
-    #     os.makedirs(dm_tokenized_stories_dir)
-    # if not os.path.exists(finished_files_dir):
-    #     os.makedirs(finished_files_dir)
-
-    # # Run stanford tokenizer on both stories dirs,
-    # # outputting to tokenized stories directories
-    # tokenize_stories(cnn_stories_dir, cnn_tokenized_stories_dir)
-    # tokenize_stories(dm_stories_dir, dm_tokenized_stories_dir)
-
-    # Read the tokenized stories, do a little postprocessing
-    # then write to bin files
-    insert_to_db(all_test_urls, "test_dataset.db")
-#    insert_to_db(all_test_urls, os.path.join(finished_files_dir, "cnndm_test_dataset.db"))
-#    insert_to_db(all_val_urls, os.path.join(finished_files_dir,  "cnndm_val_dataset.db"))
-#    insert_to_db(all_train_urls, os.path.join(finished_files_dir, "cnndm_train_dataset.db"), makevocab=True)
+    # save_as_pickle(all_train_urls, "train_dataset.pkl")
+    # insert_to_db(  all_train_urls, "train_dataset.db")
