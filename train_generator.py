@@ -2,10 +2,10 @@ from transformers.optimization import AdamW
 from model_generator import GeneTransformer
 from torch.utils.data import DataLoader, RandomSampler
 import torch, os, time, argparse, tqdm
-from utils_dataset import SQLDataset
-from utils_logplot import LogPlot
+from utils.utils_dataset import SQLDataset
+from utils.utils_logplot import LogPlot
 from datetime import datetime
-import utils_misc
+import utils.utils_misc
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--experiment", type=str, required=True, help="Experiment name. Will be used to save a model file and a log file.")
@@ -22,11 +22,11 @@ parser.add_argument('--starter_model', default="", help="which model to start wi
 
 args = parser.parse_args()
 
-models_folder = "/home/robin/TrySomethingNew/summary_loop/models/"
-logs_folder =   "/home/robin/TrySomethingNew/summary_loop/logs/"
+models_folder = "/home/robin/TrySomethingNew/mywork_backup/models/"
+logs_folder =   "/home/robin/TrySomethingNew/mywork_backup/logs/"
 
 if args.device == "cuda":
-    freer_gpu = str(utils_misc.get_freer_gpu())
+    freer_gpu = str(utils.utils_misc.get_freer_gpu())
     os.environ["CUDA_VISIBLE_DEVICES"] = ""+str(freer_gpu)
     args.experiment += "_"+freer_gpu
 
@@ -40,7 +40,7 @@ if len(args.starter_model) > 0:
 print("Model loaded")
 
 def collate_func(documents):
-    return [utils_misc.cut300(doc['body']) for doc in documents], [doc['title'] for doc in documents]
+    return [utils.utils_misc.cut300(doc['body']) for doc in documents], [doc['title'] for doc in documents]
 
 dataset = SQLDataset(args.dataset_file)
 
