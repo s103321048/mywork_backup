@@ -264,14 +264,14 @@ def save_as_pickle(url_file, out_file, makevocab=False):
 
     print("Finished writing file {}\n".format(out_file))
     with open(out_file, "wb") as f:
-        pickle.dump(news_dict_list, f)
+        pkl.dump(news_dict_list, f)
 
     # write vocab to file
     if makevocab:
         print("Writing vocab file...")
         with open(os.path.join(finished_files_dir, "vocab_cnt.pkl"),
                   'wb') as vocab_file:
-            pickle.dump(vocab_counter, vocab_file)
+            pkl.dump(vocab_counter, vocab_file)
 
         print("Finished writing vocab file")
 
