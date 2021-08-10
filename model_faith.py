@@ -24,6 +24,7 @@ warnings.filterwarnings("ignore")
 #from bert_score import BERTScorer
 benepar.download('benepar_en2')
 nltk.download('stopwords')
+nltk.download('punkt')
 
 class FEQA(object): # qa_model source: https://huggingface.co/deepset/minilm-uncased-squad2
     def __init__(self, device='cpu', qa_model_name = "deepset/minilm-uncased-squad2", qg_model_dir='models/bart_qg/checkpoints/'):
