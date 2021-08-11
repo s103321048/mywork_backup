@@ -57,6 +57,12 @@ summary = generator.decode([document], max_output_length=25, beam_size=1, return
 print(summary)
 ```
 
+## Evaluation (Optional)
+To evaluate the summarizer, you can run:
+```
+python3 eval.py
+```
+
 ## Scorer Models (Optional)
 The Factual Consistency, Coverage, Fluency models and Brecity can be used separatelt for analysis, evaluation, etc. They are respectively in `model_faith.py`, `model_coverage.py`, `model_generator.py`, `model_guardrails.py`, each model is implemented as a class with a `score(document, summary)` function. 
 

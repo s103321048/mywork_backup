@@ -7,7 +7,7 @@ from utils.eval_FEQA import cal_FEQA
 test = 5
 
 # load your model
-model_name = "gpt2_copy61_0.bin" # "summarizer_ckpt.bin"
+model_name = "" # "summarizer_{experiment_name}_ckpt.bin"
 generator = GeneTransformer(device="cuda") # Initialize the generator
 generator.reload("models/{}".format(model_name)) 
 

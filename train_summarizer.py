@@ -76,7 +76,7 @@ optimizer_grouped_parameters = [
     {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
 ]
 
-logplot_file = os.path.join(log_folder, "summary_loop_%s.log" % (args.experiment))
+logplot_file = os.path.join(log_folder, "summarizer_%s.log" % (args.experiment))
 logplot = LogPlot(logplot_file)
 
 optimizer = AdamW(optimizer_grouped_parameters, lr=learning_rate)
